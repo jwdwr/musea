@@ -3,7 +3,7 @@ import * as RAPIER from "@dimforge/rapier3d-compat";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import { CapsuleCollider, RapierRigidBody, RigidBody, useRapier, vec3 } from "@react-three/rapier";
+import { BallCollider, RapierRigidBody, RigidBody, useRapier, vec3 } from "@react-three/rapier";
 import { PlayerBody } from "./PlayerBody";
 
 const SPEED = 5;
@@ -45,7 +45,7 @@ export function Player({ lerp = MathUtils.lerp }) {
       true
     );
     const grounded = ray && ray.collider && Math.abs(ray.toi) <= 1.75;
-    if (jump && grounded) ref.current.setLinvel({ x: 0, y: 0.8, z: 0 }, true);
+    if (jump && grounded) ref.current.setLinvel({ x: 0, y: 1.2, z: 0 }, true);
   });
   return (
     <>
@@ -57,13 +57,13 @@ export function Player({ lerp = MathUtils.lerp }) {
         position={[0, 0, 0]}
         enabledRotations={[false, false, false]}
       >
-        <CapsuleCollider args={[0, 0.25]} />
+        <BallCollider args={[0.2]} />
       </RigidBody>
       <group
         ref={body}
         onPointerMissed={(e) => body.current && (body.current.children[0].rotation.x = -0.5)}
       >
-        <PlayerBody position={[0, -0.05, 1]} />
+        <PlayerBody position={[0, 0, 1]} />
       </group>
     </>
   );

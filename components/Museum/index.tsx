@@ -28,11 +28,11 @@ export function Museum({ width, length }: { width: number; length: number }) {
         ))}
 
         <RigidBody type="fixed" colliders={false}>
-          <mesh receiveShadow position={[0, -0.6, 0]} rotation-x={-Math.PI / 2}>
+          <mesh receiveShadow position={[0, -1.1, 0]} rotation-x={-Math.PI / 2}>
             <planeGeometry args={[1000, 1000]} />
             <meshStandardMaterial />
           </mesh>
-          <CuboidCollider args={[1000, 2, 1000]} position={[0, -2, 0]} />
+          <CuboidCollider args={[1000, 1, 1000]} position={[0, -1, 0]} />
         </RigidBody>
       </Physics>
     </KeyboardControls>
