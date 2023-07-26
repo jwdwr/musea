@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { BoxGeometry, MeshStandardMaterial, PlaneGeometry, Vector3 } from "three";
 import { RigidBody } from "@react-three/rapier";
 import { Direction } from "@/lib/shared/museum/directions";
-import { MeshReflectorMaterial } from "@react-three/drei";
+import { Mirror } from "./Mirror";
 
 const wallMaterial = new MeshStandardMaterial({ color: "#666" });
 const wallGeometry = new BoxGeometry(0.1, 2, 2.2);
@@ -61,9 +61,7 @@ export function RoomWall({ direction }: { direction: Direction }) {
         <mesh geometry={wallGeometry} material={wallMaterial} />
       </RigidBody>
 
-      <mesh position={mirrorPosition} geometry={mirrorGeometry} rotation={mirrorRotation}>
-        <MeshReflectorMaterial mirror={0.95} resolution={1024} />
-      </mesh>
+      <Mirror position={mirrorPosition} rotation={mirrorRotation} />
     </group>
   );
 }
