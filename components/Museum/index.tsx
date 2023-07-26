@@ -1,5 +1,10 @@
 import React from "react";
-import { FlyControls, KeyboardControls, PointerLockControls } from "@react-three/drei";
+import {
+  KeyboardControls,
+  MeshReflectorMaterial,
+  PointerLockControls,
+  Stars,
+} from "@react-three/drei";
 import { Layout } from "../../lib/shared/museum/layout";
 import { RoomComponent } from "../Room";
 import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier";
@@ -26,11 +31,11 @@ export function Museum({ width, length }: { width: number; length: number }) {
         {layout.listRooms().map((room) => (
           <RoomComponent key={`${room.location.x}-${room.location.y}`} room={room} />
         ))}
-
+        <Stars />
         <RigidBody type="fixed" colliders={false}>
-          <mesh receiveShadow position={[0, -1.1, 0]} rotation-x={-Math.PI / 2}>
+          <mesh receiveShadow position={[0, -1.05, 0]} rotation-x={-Math.PI / 2}>
             <planeGeometry args={[1000, 1000]} />
-            <meshStandardMaterial />
+            <MeshReflectorMaterial mirror={0.5} resolution={1024} />
           </mesh>
           <CuboidCollider args={[1000, 1, 1000]} position={[0, -1, 0]} />
         </RigidBody>

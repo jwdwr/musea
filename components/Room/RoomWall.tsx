@@ -4,25 +4,21 @@ import { RigidBody } from "@react-three/rapier";
 import { Direction } from "@/lib/shared/museum/directions";
 import { MeshReflectorMaterial } from "@react-three/drei";
 
-const wallMaterial = new MeshStandardMaterial({
-  color: "#ff0000",
-  transparent: false,
-  opacity: 0.5,
-});
-const wallGeometry = new BoxGeometry(0.1, 1, 1.2);
-const mirrorGeometry = new PlaneGeometry(0.4, 0.4);
+const wallMaterial = new MeshStandardMaterial({ color: "#666" });
+const wallGeometry = new BoxGeometry(0.1, 2, 2.2);
+const mirrorGeometry = new PlaneGeometry(1, 1);
 
 export function RoomWall({ direction }: { direction: Direction }) {
   const position: [x: number, y: number, z: number] = useMemo(() => {
     switch (direction) {
       case Direction.North:
-        return [0, 0, -0.55];
+        return [0, 0, -1.05];
       case Direction.South:
-        return [0, 0, 0.55];
+        return [0, 0, 1.05];
       case Direction.East:
-        return [0.55, 0, 0];
+        return [1.05, 0, 0];
       case Direction.West:
-        return [-0.55, 0, 0];
+        return [-1.05, 0, 0];
     }
   }, [direction]);
 
