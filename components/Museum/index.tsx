@@ -24,8 +24,7 @@ export function Museum({ width, length }: { width: number; length: number }) {
       ]}
     >
       <PointerLockControls />
-      <directionalLight position={[2, 3, 2]} />
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.1} />
       <Physics gravity={[0, -9.81, 0]}>
         <Player />
         {layout.listRooms().map((room) => (
