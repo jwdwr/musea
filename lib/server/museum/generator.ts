@@ -1,14 +1,15 @@
-import type { KVNamespace, R2Bucket } from "@cloudflare/workers-types";
 import type { Museum, MuseumGeneration, MuseumParams } from "@/lib/shared/types";
 import { Layout } from "@/lib/shared/museum/layout";
 import { TextGenerator } from "../text-generator";
 import { ImageGenerator } from "../image-generator";
 import { v4 } from "uuid";
+import { Bucket } from "../bucket";
+import { Store } from "../store";
 
 const imagesHost = process.env.IMAGES_HOST;
 
 export class MuseumGenerator {
-  constructor(private imageBucket: R2Bucket, private store: KVNamespace, private date: string) {}
+  constructor(private imageBucket: Bucket, private store: Store, private date: string) {}
 
   get key(): string {
     return `maps/${this.date}`;
@@ -20,7 +21,7 @@ export class MuseumGenerator {
   }
 
   private async save(record: MuseumGeneration): Promise<void> {
-    this.store.put(this.key, JSON.stringify(record));
+    this.store.set(this.key, JSON.stringify(record));
   }
 
   public async generateMuseum(): Promise<Museum> {
