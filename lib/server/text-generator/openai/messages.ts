@@ -1,4 +1,4 @@
-import type { ChatMessage } from "openai-fetch";
+import { ChatMessage } from "./completer/types";
 
 export const museumSystemMessage: ChatMessage = {
   role: "system",

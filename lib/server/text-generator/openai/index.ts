@@ -1,19 +1,20 @@
-import { OpenAIClient, type ChatMessageFunction, type ChatMessage } from "openai-fetch";
 import type { TextGenerator } from "..";
 import type { MuseumParams } from "@/lib/shared/types";
 import { museumSystemMessage, museumUserMessage } from "./messages";
 import { museumFunction } from "./functions";
+import { Completer } from "./completer/completer";
+import { OpenAICompleter } from "./completer/openaiCompleter";
+import { ChatMessage, ChatMessageFunction } from "./completer/types";
+import { OpenAIFetchCompleter } from "./completer/openaiFetchCompleter";
 
 export class OpenAITextGenerator implements TextGenerator {
-  private openai: OpenAIClient;
+  private completer: Completer;
 
   constructor() {
-    this.openai = new OpenAIClient({
-      apiKey: process.env.OPENAI_API_KEY,
-      fetchOptions: {
-        credentials: undefined,
-      },
-    });
+    this.completer =
+      process.env.COMPLETION_ADAPTER === "openai-fetch"
+        ? new OpenAIFetchCompleter()
+        : new OpenAICompleter();
   }
 
   generateMuseumParams(): Promise<MuseumParams> {
@@ -30,28 +31,25 @@ export class OpenAITextGenerator implements TextGenerator {
     const temperature = 0.7;
     const maxTokens = 1000;
 
-    while (retryCount <= maxRetries) {
-      const completion = await this.openai.createChatCompletion({
-        model,
-        temperature: temperature,
-        max_tokens: maxTokens,
-        messages,
-        functions,
-        function_call: "auto",
-      });
+    const completion = await this.completer.completeChat(
+      model,
+      temperature,
+      maxTokens,
+      messages,
+      functions
+    );
 
-      const functionCall = completion.message?.function_call?.arguments;
-      try {
-        if (!functionCall) throw new Error("No function call");
-        return JSON.parse(functionCall);
-      } catch (error) {
-        console.error("Failed on message", completion.message);
-        retryCount++;
-        if (retryCount === maxRetries) {
-          model = "gpt-4-0613";
-        } else if (retryCount > maxRetries) {
-          throw new Error(`Invalid JSON: ${functionCall}`);
-        }
+    const functionCall = completion?.function_call?.arguments;
+    try {
+      if (!functionCall) throw new Error("No function call");
+      return JSON.parse(functionCall);
+    } catch (error) {
+      console.error("Failed on message", completion);
+      retryCount++;
+      if (retryCount === maxRetries) {
+        model = "gpt-4-0613";
+      } else if (retryCount > maxRetries) {
+        throw new Error(`Invalid JSON: ${functionCall}`);
       }
     }
 
