@@ -12,7 +12,7 @@ export default async function Home() {
   );
 }
 
-export async function getMuseum(): Promise<Museum> {
-  const res = await fetch("http://localhost:3000/api/museum");
+async function getMuseum(): Promise<Museum> {
+  const res = await fetch("http://localhost:3000/api/museum", { next: { revalidate: 3600 } });
   return res.json();
 }

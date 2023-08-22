@@ -6,8 +6,6 @@ import { v4 } from "uuid";
 import { Bucket } from "../bucket";
 import { Store } from "../store";
 
-const imagesHost = process.env.IMAGES_HOST;
-
 export class MuseumGenerator {
   constructor(private imageBucket: Bucket, private store: Store, private date: string) {}
 
@@ -65,8 +63,7 @@ export class MuseumGenerator {
       const image = images[index];
       const uuid = v4();
       const imageKey = `paintings/${this.date}/${uuid}.png`;
-      await this.imageBucket.put(imageKey, image);
-      const imageUrl = `${imagesHost}/${imageKey}`;
+      const imageUrl = await this.imageBucket.put(imageKey, image);
       rooms[index].addPainting(imageUrl);
     }
   }

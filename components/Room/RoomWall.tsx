@@ -2,13 +2,15 @@ import React, { useMemo } from "react";
 import { BoxGeometry, MeshStandardMaterial, PlaneGeometry, Vector3 } from "three";
 import { RigidBody } from "@react-three/rapier";
 import { Direction } from "@/lib/shared/museum/directions";
-import { Mirror } from "./Mirror";
+import { Painting } from "./Painting";
+import { Wall } from "@/lib/shared/types";
 
 const wallMaterial = new MeshStandardMaterial({ color: "#666" });
 const wallGeometry = new BoxGeometry(0.1, 2, 2.2);
-const mirrorGeometry = new PlaneGeometry(1, 1);
 
-export function RoomWall({ direction }: { direction: Direction }) {
+export function RoomWall({ wall }: { wall: Wall }) {
+  const { direction } = wall;
+
   const position: [x: number, y: number, z: number] = useMemo(() => {
     switch (direction) {
       case Direction.North:
@@ -33,7 +35,7 @@ export function RoomWall({ direction }: { direction: Direction }) {
     }
   }, [direction]);
 
-  const mirrorPosition: [x: number, y: number, z: number] = useMemo(() => {
+  const paintingPosition: [x: number, y: number, z: number] = useMemo(() => {
     switch (direction) {
       case Direction.South:
       case Direction.West:
@@ -44,7 +46,7 @@ export function RoomWall({ direction }: { direction: Direction }) {
     }
   }, [direction]);
 
-  const mirrorRotation: [x: number, y: number, z: number] = useMemo(() => {
+  const paintingRotation: [x: number, y: number, z: number] = useMemo(() => {
     switch (direction) {
       case Direction.South:
       case Direction.West:
@@ -61,7 +63,11 @@ export function RoomWall({ direction }: { direction: Direction }) {
         <mesh geometry={wallGeometry} material={wallMaterial} />
       </RigidBody>
 
-      <Mirror position={mirrorPosition} rotation={mirrorRotation} />
+      <Painting
+        position={paintingPosition}
+        rotation={paintingRotation}
+        imageUrl={wall.paintingUrl}
+      />
     </group>
   );
 }

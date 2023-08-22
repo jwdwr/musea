@@ -26,10 +26,10 @@ export function RoomComponent({ room, withCeiling = true }: { room: Room; withCe
             <mesh position={[0, 1.05, 0]} geometry={ceilingGeometry} material={floorMaterial} />
           </RigidBody>
         )}
-        {room.walls[Direction.North] && <RoomWall direction={Direction.North} />}
-        {room.walls[Direction.South] && <RoomWall direction={Direction.South} />}
-        {room.walls[Direction.East] && <RoomWall direction={Direction.East} />}
-        {room.walls[Direction.West] && <RoomWall direction={Direction.West} />}
+        {room.walls[Direction.North] && <RoomWall wall={room.walls[Direction.North]} />}
+        {room.walls[Direction.South] && <RoomWall wall={room.walls[Direction.South]} />}
+        {room.walls[Direction.East] && <RoomWall wall={room.walls[Direction.East]} />}
+        {room.walls[Direction.West] && <RoomWall wall={room.walls[Direction.West]} />}
       </group>
     </>
   );

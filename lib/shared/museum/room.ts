@@ -7,20 +7,20 @@ export class Room {
   constructor(
     public location: Location = { x: 0, y: 0 },
     public walls: Walls = {
-      [Direction.North]: true,
-      [Direction.East]: true,
-      [Direction.South]: true,
-      [Direction.West]: true,
+      [Direction.North]: { direction: Direction.North },
+      [Direction.East]: { direction: Direction.East },
+      [Direction.South]: { direction: Direction.South },
+      [Direction.West]: { direction: Direction.West },
     }
   ) {}
 
   public removeWall(direction: Direction) {
-    this.walls[direction] = false;
+    this.walls[direction] = null;
   }
 
   public addPainting(imageUrl: string) {
-    const directions = allDirections.filter((direction) => this.walls[direction] === true);
+    const directions = allDirections.filter((direction) => this.walls[direction]);
     const direction = directions[Math.floor(Math.random() * directions.length)];
-    this.painting = { direction, imageUrl };
+    this.walls[direction]!.paintingUrl = imageUrl;
   }
 }

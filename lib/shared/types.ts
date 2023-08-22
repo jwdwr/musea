@@ -16,8 +16,13 @@ export interface MuseumParams {
 }
 
 export type Walls = {
-  [key in Direction]: boolean;
+  [key in Direction]: Wall | null;
 };
+
+export interface Wall {
+  direction: Direction;
+  paintingUrl?: string;
+}
 
 export interface Location {
   x: number;
