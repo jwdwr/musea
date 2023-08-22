@@ -1,6 +1,6 @@
 import type { Store } from ".";
 
-export class TestStore implements Store {
+export class SimpleStore implements Store {
   private store: Record<string, string>;
 
   constructor() {
