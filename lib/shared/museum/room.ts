@@ -1,4 +1,4 @@
-import type { Location, Painting, Walls } from "../types";
+import type { Location, Painting, Size, Walls } from "../types";
 import { Direction, allDirections } from "./directions";
 
 export class Room {
@@ -6,6 +6,7 @@ export class Room {
 
   constructor(
     public location: Location = { x: 0, y: 0 },
+    public size: Size = { width: 1, height: 1, depth: 1 },
     public walls: Walls = {
       [Direction.North]: { direction: Direction.North },
       [Direction.East]: { direction: Direction.East },

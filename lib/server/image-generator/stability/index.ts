@@ -9,7 +9,7 @@ export class StabilityGenerator implements ImageGenerator {
     options: ImageGeneratorOptions = {},
     advanced: Partial<StabilityRequest> = {}
   ): Promise<Buffer[]> {
-    const engineId = "stable-diffusion-xl-beta-v2-2-2";
+    const engineId = "stable-diffusion-xl-1024-v1-0";
     const apiHost = process.env.STABILITY_API_HOST;
     const apiKey = process.env.STABILITY_API_KEY;
     if (!apiKey) throw new Error("Missing Stability API key.");

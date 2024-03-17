@@ -27,8 +27,8 @@ export class OpenAITextGenerator implements TextGenerator {
   ): Promise<T> {
     let retryCount = 0;
     const maxRetries = 2;
-    let model = "gpt-3.5-turbo-0613";
-    const temperature = 0.7;
+    let model = "gpt-3.5-turbo";
+    const temperature = 0.9;
     const maxTokens = 1000;
 
     const completion = await this.completer.completeChat(
@@ -47,7 +47,7 @@ export class OpenAITextGenerator implements TextGenerator {
       console.error("Failed on message", completion);
       retryCount++;
       if (retryCount === maxRetries) {
-        model = "gpt-4-0613";
+        model = "gpt-4-turbo-preview";
       } else if (retryCount > maxRetries) {
         throw new Error(`Invalid JSON: ${functionCall}`);
       }

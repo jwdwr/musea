@@ -14,6 +14,7 @@ export interface StabilityRequest {
   width: number;
   samples: number;
   steps: number;
+  style_preset: string;
 }
 
 export const defaultStabilityRequest = {

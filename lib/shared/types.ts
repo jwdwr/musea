@@ -29,6 +29,12 @@ export interface Location {
   y: number;
 }
 
+export interface Size {
+  width: number;
+  height: number;
+  depth: number;
+}
+
 export interface Museum {
   params: MuseumParams;
   grid: LayoutGrid;
