@@ -4,5 +4,5 @@ import { NextResponse } from "next/server";
 export const runtime = "edge";
 
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json(museumService.viewMuseum());
+  return NextResponse.json(await museumService.viewMuseum());
 }
