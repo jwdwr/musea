@@ -35,7 +35,7 @@ export class Layout {
 
     currentRoom?.removeWall(
       getOppositeDirection(
-        allDirections.filter((direction) => currentRoom.walls[direction] === false)[0]
+        allDirections.filter((direction) => currentRoom.walls[direction] === null)[0]
       )
     );
   }
