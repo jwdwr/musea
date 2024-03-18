@@ -10,7 +10,8 @@ export class CFBucket implements Bucket {
   }
 
   async put(key: string, value: Buffer): Promise<string> {
-    await this.bucket.put(key, value);
+    const result = await this.bucket.put(key, value);
+    console.log(result);
     return `${this.baseUrl}/${key}`;
   }
 
