@@ -6,8 +6,12 @@ import { redirect } from "next/navigation";
 import { Museum } from "../Museum";
 import { World } from "../World";
 
-export function MuseumLoader({ initialGeneration }: { initialGeneration: MuseumGeneration }) {
-  const [generation, setGeneration] = useState<MuseumGeneration | null>(initialGeneration);
+export function MuseumLoader({
+  initialGeneration,
+}: {
+  initialGeneration: MuseumGeneration | undefined;
+}) {
+  const [generation, setGeneration] = useState(initialGeneration);
 
   const checkMuseum = useCallback(async () => {
     const res = await fetch("http://localhost:3000/api/museum/view");
@@ -20,7 +24,6 @@ export function MuseumLoader({ initialGeneration }: { initialGeneration: MuseumG
   }, [setGeneration]);
 
   useEffect(() => {
-    console.log(generation);
     if (!generation?.status) {
       newMuseum();
     } else if (generation?.status === "generated") {

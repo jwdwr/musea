@@ -3,6 +3,7 @@ import { MuseumGeneration } from "@/lib/shared/types";
 import { redirect } from "next/navigation";
 import { MuseumLoader } from "@/components/Loader";
 import { Museum } from "@/components/Museum";
+import { museumService } from "@/lib/server/museum/service";
 
 export default async function NewMuseum() {
   const generation = await getMuseum();
@@ -14,7 +15,6 @@ export default async function NewMuseum() {
   return <MuseumLoader initialGeneration={generation} />;
 }
 
-async function getMuseum(): Promise<MuseumGeneration> {
-  const res = await fetch("http://localhost:3000/api/museum/view", { next: { revalidate: 3600 } });
-  return res.json();
+async function getMuseum(): Promise<MuseumGeneration | undefined> {
+  return museumService.viewMuseum();
 }

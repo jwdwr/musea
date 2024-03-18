@@ -15,7 +15,6 @@ export class MuseumGenerator {
 
   public async load(): Promise<MuseumGeneration | undefined> {
     const record = await this.store.get(this.key);
-    console.log(record);
     return record && JSON.parse(record);
   }
 
