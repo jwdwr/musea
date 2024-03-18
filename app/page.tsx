@@ -9,8 +9,7 @@ export default async function Home() {
   const generation = await getMuseum();
 
   if (generation?.status !== "generated") {
-    redirect("/new");
-    return null;
+    return redirect("/new");
   }
 
   return (
