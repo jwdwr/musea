@@ -14,6 +14,7 @@ export class MuseumService {
   private generator: MuseumGenerator;
   constructor() {
     const date = dayjs().format("YYYY-MM-DD-HH");
+    console.log("Using date", date);
     let store: Store;
     let bucket: Bucket;
     try {

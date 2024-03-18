@@ -15,10 +15,12 @@ export class MuseumGenerator {
 
   public async load(): Promise<MuseumGeneration | undefined> {
     const record = await this.store.get(this.key);
+    console.log("loaded", this.key, record);
     return record && JSON.parse(record);
   }
 
   private async save(record: MuseumGeneration): Promise<void> {
+    console.log("saving", this.key, record);
     this.store.set(this.key, JSON.stringify(record));
   }
 
@@ -28,6 +30,7 @@ export class MuseumGenerator {
       if (generation) return generation;
 
       generation = { status: "generating" };
+      console.log("Generating new museum");
       this.save(generation);
 
       const layout = await this.generateLayout();
@@ -36,6 +39,7 @@ export class MuseumGenerator {
 
       const museum = { params, grid: layout.grid };
       generation = { status: "generated", museum };
+      console.log("Generated new museum");
       this.save(generation);
 
       return generation;
