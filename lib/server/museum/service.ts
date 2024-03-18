@@ -3,22 +3,29 @@ import { KVStore } from "../store/kv";
 import { Store } from "../store";
 import { Bucket } from "../bucket";
 import { CFBucket } from "../bucket/cf";
-import { LocalBucket } from "../bucket/local";
 import { MuseumGenerator } from "./generator";
 import { simpleStore } from "../store/simple";
 import dayjs from "dayjs";
 import { MuseumGeneration } from "@/lib/shared/types";
+import { getRequestContext } from "@cloudflare/next-on-pages";
+import { TestBucket } from "../bucket/test";
 
 export class MuseumService {
   private generator: MuseumGenerator;
   constructor() {
     const date = dayjs().format("YYYY-MM-DD-HH");
-    const imageBucket = process.env.IMAGES as R2Bucket | undefined;
-    const mapsKv = process.env.MAPS as KVNamespace | undefined;
-    const store: Store = mapsKv ? new KVStore(mapsKv) : simpleStore;
-    const bucket: Bucket = imageBucket
-      ? new CFBucket(imageBucket, process.env.IMAGES_HOST!)
-      : new LocalBucket(process.env.IMAGES_HOST!);
+    let store: Store;
+    let bucket: Bucket;
+    try {
+      const imageBucket = getRequestContext().env.IMAGES as R2Bucket;
+      const mapsKv = getRequestContext().env.MAPS as KVNamespace;
+      store = new KVStore(mapsKv);
+      bucket = new CFBucket(imageBucket, process.env.IMAGES_HOST!);
+    } catch (e) {
+      console.error("Failed to initialize Cloudflare services, falling back to local");
+      store = simpleStore;
+      bucket = new TestBucket("/images");
+    }
 
     this.generator = new MuseumGenerator(bucket, store, date);
   }

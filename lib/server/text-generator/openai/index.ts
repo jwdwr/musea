@@ -11,10 +11,7 @@ export class OpenAITextGenerator implements TextGenerator {
   private completer: Completer;
 
   constructor() {
-    this.completer =
-      process.env.COMPLETION_ADAPTER === "openai-fetch"
-        ? new OpenAIFetchCompleter()
-        : new OpenAICompleter();
+    this.completer = new OpenAIFetchCompleter();
   }
 
   generateMuseumParams(nPrompts: number): Promise<MuseumParams> {

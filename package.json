@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudflare/next-on-pages": "^1.10.0",
     "@react-three/drei": "^9.79.3",
     "@react-three/fiber": "^8.13.5",
     "@react-three/rapier": "^1.1.1",
