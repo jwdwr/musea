@@ -3,7 +3,7 @@ import { Museum as MuseumComponent } from "../components/Museum";
 import { World } from "../components/World";
 import { MuseumGeneration } from "@/lib/shared/types";
 import { redirect } from "next/navigation";
-import { museumService } from "@/lib/server/museum/service";
+import { MuseumService } from "@/lib/server/museum/service";
 
 export default async function Home() {
   const generation = await getMuseum();
@@ -21,5 +21,5 @@ export default async function Home() {
 }
 
 async function getMuseum(): Promise<MuseumGeneration | undefined> {
-  return museumService.viewMuseum();
+  return new MuseumService().viewMuseum();
 }

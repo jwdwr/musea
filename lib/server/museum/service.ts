@@ -39,5 +39,3 @@ export class MuseumService {
     return this.generator.generateMuseum();
   }
 }
-
-export const museumService = new MuseumService();
