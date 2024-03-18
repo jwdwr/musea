@@ -1,3 +1,9 @@
+export interface StabilityConfig {
+  model: string;
+  apiHost: string;
+  apiKey: string;
+}
+
 export interface StabilityResponse {
   artifacts: Array<{
     base64: string;
@@ -14,14 +20,14 @@ export interface StabilityRequest {
   width: number;
   samples: number;
   steps: number;
-  style_preset: string;
+  style_preset?: string;
 }
 
 export const defaultStabilityRequest = {
   cfg_scale: 7,
   clip_guidance_preset: "FAST_BLUE",
-  height: 512,
-  width: 512,
+  height: 1024,
+  width: 1024,
   samples: 1,
   steps: 40,
 };

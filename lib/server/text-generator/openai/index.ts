@@ -17,8 +17,8 @@ export class OpenAITextGenerator implements TextGenerator {
         : new OpenAICompleter();
   }
 
-  generateMuseumParams(): Promise<MuseumParams> {
-    return this.generate([museumSystemMessage, museumUserMessage], [museumFunction]);
+  generateMuseumParams(nPrompts: number): Promise<MuseumParams> {
+    return this.generate([museumSystemMessage, museumUserMessage(nPrompts)], [museumFunction]);
   }
 
   async generate<T = Record<string, unknown>>(

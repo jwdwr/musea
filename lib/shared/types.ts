@@ -11,7 +11,7 @@ export interface MuseumPalette {
 
 export interface MuseumParams {
   theme: string;
-  prompt: string;
+  prompts: string[];
   palette: MuseumPalette;
 }
 

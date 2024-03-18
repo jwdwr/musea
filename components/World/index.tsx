@@ -7,12 +7,8 @@ import {
   PointerLockControls,
   Stars,
 } from "@react-three/drei";
-import { Layout } from "../../lib/shared/museum/layout";
-import { RoomComponent } from "../Room";
 import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier";
 import { Player } from "../Player";
-import { Museum } from "@/lib/shared/types";
-import { Museum as MuseumComponent } from "../Museum";
 import { Canvas } from "@react-three/fiber";
 
 export function World({ children }: { children?: React.ReactNode }) {

@@ -8,9 +8,12 @@ export const museumFunction = {
         type: "string",
         description: "museum theme",
       },
-      prompt: {
-        type: "string",
-        description: "prompt for generating paintings",
+      prompts: {
+        type: "array",
+        description: "prompts for generating paintings",
+        items: {
+          type: "string",
+        },
       },
       palette: {
         type: "object",

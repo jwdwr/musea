@@ -1,21 +1,25 @@
 import { Buffer } from "buffer";
 import type { ImageGenerator, ImageGeneratorOptions } from "..";
-import { defaultStabilityRequest, type StabilityRequest, type StabilityResponse } from "./types";
+import {
+  defaultStabilityRequest,
+  type StabilityConfig,
+  type StabilityRequest,
+  type StabilityResponse,
+} from "./types";
 
 export class StabilityGenerator implements ImageGenerator {
+  constructor(private config: StabilityConfig) {}
   public async generateImages(
     prompt: string,
     count: number,
     options: ImageGeneratorOptions = {},
-    advanced: Partial<StabilityRequest> = {}
+    advanced: Partial<StabilityRequest> = {},
   ): Promise<Buffer[]> {
-    const engineId = "stable-diffusion-xl-1024-v1-0";
-    const apiHost = process.env.STABILITY_API_HOST;
-    const apiKey = process.env.STABILITY_API_KEY;
+    const { apiKey, apiHost, model } = this.config;
     if (!apiKey) throw new Error("Missing Stability API key.");
     if (!apiHost) throw new Error("Missing Stability API host.");
 
-    const response = await fetch(`${apiHost}/v1/generation/${engineId}/text-to-image`, {
+    const response = await fetch(`${apiHost}/v1/generation/${model}/text-to-image`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +41,7 @@ export class StabilityGenerator implements ImageGenerator {
     prompt: string,
     count: number,
     options: ImageGeneratorOptions,
-    advanced: Partial<StabilityRequest>
+    advanced: Partial<StabilityRequest>,
   ): StabilityRequest {
     return {
       ...defaultStabilityRequest,
@@ -46,6 +50,7 @@ export class StabilityGenerator implements ImageGenerator {
       steps: options.steps ?? defaultStabilityRequest.steps,
       width: options.width ?? defaultStabilityRequest.width,
       height: options.height ?? defaultStabilityRequest.height,
+      style_preset: options.stylePreset,
       ...advanced,
     };
   }

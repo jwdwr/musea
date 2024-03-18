@@ -19,3 +19,5 @@ export class SimpleStore implements Store {
     delete this.store[key];
   }
 }
+
+export const simpleStore = new SimpleStore();

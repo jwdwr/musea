@@ -1,11 +1,14 @@
 import { ChatMessage } from "./completer/types";
+import { museumParamsPrompt, museumSystemPrompt } from "./prompts";
 
 export const museumSystemMessage: ChatMessage = {
   role: "system",
-  content: process.env.MUSEUM_PARAMS_SYSTEM_PROMPT!,
+  content: museumSystemPrompt,
 };
 
-export const museumUserMessage: ChatMessage = {
-  role: "user",
-  content: process.env.MUSEUM_PARAMS_PROMPT!,
-};
+export function museumUserMessage(nPrompts: number): ChatMessage {
+  return {
+    role: "user",
+    content: museumParamsPrompt(nPrompts),
+  };
+}

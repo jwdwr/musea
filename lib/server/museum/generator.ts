@@ -13,8 +13,9 @@ export class MuseumGenerator {
     return `maps/${this.date}`;
   }
 
-  private async load(): Promise<MuseumGeneration | undefined> {
+  public async load(): Promise<MuseumGeneration | undefined> {
     const record = await this.store.get(this.key);
+    console.log(record);
     return record && JSON.parse(record);
   }
 
@@ -22,20 +23,23 @@ export class MuseumGenerator {
     this.store.set(this.key, JSON.stringify(record));
   }
 
-  public async generateMuseum(): Promise<Museum> {
+  public async generateMuseum(): Promise<MuseumGeneration> {
     try {
-      const record = await this.load();
-      if (record?.status === "generating") throw new Error("Museum is generating.");
-      else if (record?.status === "generated") return record.museum;
+      let generation = await this.load();
+      if (generation) return generation;
 
-      this.save({ status: "generating" });
-      const params = await this.generateParams();
+      generation = { status: "generating" };
+      this.save(generation);
+
       const layout = await this.generateLayout();
+      const params = await this.generateParams(layout.listRooms().length);
       await this.generatePaintings(layout, params);
-      const museum = { params, grid: layout.grid };
-      this.save({ status: "generated", museum });
 
-      return museum;
+      const museum = { params, grid: layout.grid };
+      generation = { status: "generated", museum };
+      this.save(generation);
+
+      return generation;
     } catch (e) {
       this.save({
         status: "failed",
@@ -45,9 +49,9 @@ export class MuseumGenerator {
     }
   }
 
-  private async generateParams(): Promise<MuseumParams> {
+  private async generateParams(nPrompts: number): Promise<MuseumParams> {
     const textGen = TextGenerator.create();
-    return textGen.generateMuseumParams();
+    return textGen.generateMuseumParams(nPrompts);
   }
 
   private async generateLayout(): Promise<Layout> {
@@ -56,8 +60,14 @@ export class MuseumGenerator {
 
   private async generatePaintings(layout: Layout, params: MuseumParams): Promise<void> {
     const rooms = layout.listRooms();
-    const imageGen = ImageGenerator.create();
-    const images = await imageGen.generateImages(params.prompt, rooms.length);
+    const imageGen = ImageGenerator.create("stability", {
+      model: process.env.STABILITY_MODEL!,
+      apiHost: process.env.STABILITY_API_HOST!,
+      apiKey: process.env.STABILITY_API_KEY!,
+    });
+    const images = (
+      await Promise.all(params.prompts.map((prompt) => imageGen.generateImages(prompt, 1)))
+    ).flat();
 
     for (const index in images) {
       const image = images[index];
