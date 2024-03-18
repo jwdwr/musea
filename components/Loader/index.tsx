@@ -14,12 +14,12 @@ export function MuseumLoader({
   const [generation, setGeneration] = useState(initialGeneration);
 
   const checkMuseum = useCallback(async () => {
-    const res = await fetch("http://localhost:3000/api/museum/view");
+    const res = await fetch("/api/museum/view");
     setGeneration(await res.json());
   }, [setGeneration]);
 
   const newMuseum = useCallback(async () => {
-    const res = await fetch("http://localhost:3000/api/museum/new");
+    const res = await fetch("/api/museum/new");
     setGeneration(await res.json());
   }, [setGeneration]);
 
