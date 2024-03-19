@@ -3,6 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MuseumGeneration } from "@/lib/shared/types";
 import { redirect } from "next/navigation";
+import { Museum } from "../Museum";
+import { World } from "../World";
 import dayjs from "dayjs";
 import "./loader.css";
 
@@ -27,7 +29,7 @@ export function MuseumLoader({
     if (!generation?.status) {
       newMuseum();
     } else if (generation?.status === "generated") {
-      return redirect("/");
+      return;
     } else {
       setTimeout(() => checkMuseum(), 1000);
     }
@@ -36,7 +38,11 @@ export function MuseumLoader({
   const date = useMemo(() => dayjs().format("MMMM D, YYYY"), []);
   const time = useMemo(() => dayjs().format("ha"), []);
 
-  return (
+  return generation?.status === "generated" ? (
+    <World>
+      <Museum museum={generation.museum} />
+    </World>
+  ) : (
     <div className="page">
       <div className="loading">
         <h1 className="title">
