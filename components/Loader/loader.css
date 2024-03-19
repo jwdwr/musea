@@ -1,0 +1,45 @@
+.page {
+  display: flex;
+  place-content: center;
+  place-items: center;
+  height: 100%;
+}
+
+.loading {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  place-items: center;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.loader {
+  margin: 4px;
+  width: 320px;
+  height: 16px;
+  background-color: #f1f1f1;
+  position: relative;
+  overflow: hidden;
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  background-color: #aaa;
+  animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 100%;
+  }
+}

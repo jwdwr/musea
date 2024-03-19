@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MuseumGeneration } from "@/lib/shared/types";
 import { redirect } from "next/navigation";
-import { Museum } from "../Museum";
-import { World } from "../World";
+import dayjs from "dayjs";
+import "./loader.css";
 
 export function MuseumLoader({
   initialGeneration,
@@ -27,17 +27,26 @@ export function MuseumLoader({
     if (!generation?.status) {
       newMuseum();
     } else if (generation?.status === "generated") {
-      return;
+      return redirect("/");
     } else {
       setTimeout(() => checkMuseum(), 1000);
     }
   }, [checkMuseum, newMuseum, generation]);
 
-  return generation?.status === "generated" ? (
-    <World>
-      <Museum museum={generation.museum} />
-    </World>
-  ) : (
-    <div>Loading...</div>
+  const date = useMemo(() => dayjs().format("MMMM D, YYYY"), []);
+  const time = useMemo(() => dayjs().format("ha"), []);
+
+  return (
+    <div className="page">
+      <div className="loading">
+        <h1 className="title">
+          <strong>musea</strong>: hourly museum generator
+        </h1>
+        <p className="message">
+          the {time} museum for {date} is under construction. please wait a moment.
+        </p>
+        <div className="loader" />
+      </div>
+    </div>
   );
 }
