@@ -44,8 +44,15 @@ export class MuseumGenerator {
       console.log("Generating new museum");
       this.save(generation);
 
+      console.log("Generating layout");
       const layout = await this.generateLayout();
+      console.log("Generated layout");
+
+      console.log("Generating params");
       const params = await this.generateParams(layout.listRooms().length);
+      console.log("Generated params");
+
+      console.log("Generating paintings");
       await this.generatePaintings(layout, params);
 
       const museum = { params, grid: layout.grid };

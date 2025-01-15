@@ -1,4 +1,6 @@
-export const museumFunction = {
+import { Tool } from "../../generators";
+
+export const museumFunction: Tool = {
   name: "generateMuseum",
   description: "Generate a museum.",
   parameters: {
