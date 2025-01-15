@@ -44,7 +44,7 @@ export function Player({ lerp = MathUtils.lerp }) {
       0,
       true
     );
-    const grounded = ray && ray.collider && Math.abs(ray.toi) <= 1.75;
+    const grounded = ray && ray.collider && Math.abs(ray.timeOfImpact) <= 1.75;
     if (jump && grounded) ref.current.setLinvel({ x: 0, y: 2, z: 0 }, true);
   });
   return (

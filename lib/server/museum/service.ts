@@ -9,7 +9,6 @@ import dayjs from "dayjs";
 import { MuseumGeneration } from "@/lib/shared/types";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 import { TestBucket } from "../bucket/test";
-import { LocalBucket } from "../bucket/local";
 
 export class MuseumService {
   private generator: MuseumGenerator;
@@ -32,7 +31,7 @@ export class MuseumService {
     } catch (e) {
       console.log("Using local fallback services");
       store = simpleStore;
-      bucket = new LocalBucket("/images");
+      bucket = new TestBucket("/images");
     }
 
     // Create generator only after store and bucket are definitely initialized

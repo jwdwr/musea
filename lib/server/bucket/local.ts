@@ -1,5 +1,5 @@
 import type { Bucket } from ".";
-import { writeFile, readFile, rm, mkdir } from "fs/promises";
+
 import { dirname } from "path";
 import { cwd } from "process";
 
@@ -7,6 +7,7 @@ export class LocalBucket implements Bucket {
   constructor(private bucketDirectory: string) {}
 
   async put(key: string, value: Buffer): Promise<string> {
+    const { mkdir, writeFile } = await import("fs/promises");
     const parentDirectory = `${cwd()}/public/${this.bucketDirectory}`;
     await mkdir(`${parentDirectory}/${dirname(key)}`, {
       recursive: true,
@@ -18,6 +19,7 @@ export class LocalBucket implements Bucket {
 
   async get(key: string): Promise<Buffer | null> {
     try {
+      const { readFile } = await import("fs/promises");
       return await readFile(`${this.bucketDirectory}/${key}`);
     } catch (_) {
       return null;
@@ -25,6 +27,7 @@ export class LocalBucket implements Bucket {
   }
 
   async delete(key: string): Promise<void> {
+    const { rm } = await import("fs/promises");
     await rm(`${this.bucketDirectory}/${key}`);
   }
 }
