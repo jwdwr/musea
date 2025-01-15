@@ -35,6 +35,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230717.1",
     "@types/three": "^0.154.0",
-    "@types/uuid": "^9.0.2"
+    "@types/uuid": "^9.0.2",
+    "vercel": "39.1.1"
+  },
+  "overrides": {
+    "vercel": "$vercel"
   }
 }
