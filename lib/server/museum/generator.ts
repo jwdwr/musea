@@ -14,14 +14,25 @@ export class MuseumGenerator {
   }
 
   public async load(): Promise<MuseumGeneration | undefined> {
-    const record = await this.store.get(this.key);
-    console.log("loaded", this.key, record);
-    return record && JSON.parse(record);
+    try {
+      console.log("loading", this.key, this.store);
+      const record = await this.store.get(this.key);
+      console.log("loaded", this.key, record);
+      return record && JSON.parse(record);
+    } catch (e) {
+      console.error("Failed to load museum", e);
+      return undefined;
+    }
   }
 
   private async save(record: MuseumGeneration): Promise<void> {
-    console.log("saving", this.key, record);
-    this.store.set(this.key, JSON.stringify(record));
+    try {
+      console.log("saving", this.key, record, this.store);
+      this.store.set(this.key, JSON.stringify(record));
+      console.log("saved", this.key, record);
+    } catch (e) {
+      console.error("Failed to save museum", e);
+    }
   }
 
   public async generateMuseum(): Promise<MuseumGeneration> {
