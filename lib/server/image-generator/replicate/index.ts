@@ -39,8 +39,10 @@ export class ReplicateGenerator implements ImageGenerator {
                 input: this.getRequest(prompt, options, advanced),
               }
             );
-            // FileOutput objects can be used directly as they implement ReadableStream
-            return Buffer.from(await (result as any).blob());
+            // Convert FileOutput to Buffer by first getting the ArrayBuffer
+            const blob: Blob = await (result as any).blob();
+            const arrayBuffer = await blob.arrayBuffer();
+            return Buffer.from(arrayBuffer);
           })
       );
 
