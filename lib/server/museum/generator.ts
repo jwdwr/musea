@@ -63,10 +63,9 @@ export class MuseumGenerator {
 
   private async generatePaintings(layout: Layout, params: MuseumParams): Promise<void> {
     const rooms = layout.listRooms();
-    const imageGen = ImageGenerator.create("stability", {
-      model: process.env.STABILITY_MODEL!,
-      apiHost: process.env.STABILITY_API_HOST!,
-      apiKey: process.env.STABILITY_API_KEY!,
+    const imageGen = ImageGenerator.create("replicate", {
+      model: process.env.REPLICATE_MODEL!,
+      apiKey: process.env.REPLICATE_API_KEY!,
     });
     const images = (
       await Promise.all(params.prompts.map((prompt) => imageGen.generateImages(prompt, 1)))
