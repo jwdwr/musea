@@ -17,17 +17,22 @@ export class MuseumService {
     console.log("Using date", date);
     let store: Store;
     let bucket: Bucket;
+
+    // Initialize store and bucket first
     try {
       const imageBucket = getRequestContext().env.IMAGES as R2Bucket;
       const mapsKv = getRequestContext().env.MAPS as KVNamespace;
+      if (!imageBucket || !mapsKv) throw new Error("Required Cloudflare services not available");
+
       store = new KVStore(mapsKv);
       bucket = new CFBucket(imageBucket, process.env.IMAGES_HOST!);
     } catch (e) {
-      console.error("Failed to initialize Cloudflare services, falling back to local");
+      console.log("Using local fallback services");
       store = simpleStore;
       bucket = new TestBucket("/images");
     }
 
+    // Create generator only after store and bucket are definitely initialized
     this.generator = new MuseumGenerator(bucket, store, date);
   }
 
