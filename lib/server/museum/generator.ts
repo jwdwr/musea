@@ -76,7 +76,7 @@ export class MuseumGenerator {
     const rooms = layout.listRooms();
     const imageGen = ImageGenerator.create("replicate", {
       model: process.env.REPLICATE_MODEL!,
-      apiKey: process.env.REPLICATE_API_KEY!,
+      apiKey: process.env.REPLICATE_API_TOKEN!,
     });
     const images = (
       await Promise.all(params.prompts.map((prompt) => imageGen.generateImages(prompt, 1)))

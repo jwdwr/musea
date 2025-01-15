@@ -20,8 +20,10 @@ export class MuseumService {
 
     // Initialize store and bucket first
     try {
-      const imageBucket = getRequestContext().env.IMAGES as R2Bucket;
-      const mapsKv = getRequestContext().env.MAPS as KVNamespace;
+      const context = getRequestContext();
+      console.log("context", context);
+      const imageBucket = context.env.IMAGES as R2Bucket;
+      const mapsKv = context.env.MAPS as KVNamespace;
       if (!imageBucket || !mapsKv) throw new Error("Required Cloudflare services not available");
 
       store = new KVStore(mapsKv);
