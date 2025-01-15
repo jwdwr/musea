@@ -76,7 +76,7 @@ export class MuseumGenerator {
   }
 
   private async generateLayout(): Promise<Layout> {
-    return Layout.generateLayout(5, 5);
+    return Layout.generateLayout(1, 1);
   }
 
   private async generatePaintings(layout: Layout, params: MuseumParams): Promise<void> {

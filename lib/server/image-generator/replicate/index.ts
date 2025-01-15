@@ -32,17 +32,19 @@ export class ReplicateGenerator implements ImageGenerator {
       const outputs = await Promise.all(
         Array(count)
           .fill(null)
-          .map(() =>
-            this.replicate.run(
+          .map(async () => {
+            const result = await this.replicate.run(
               this.config.model as `${string}/${string}` | `${string}/${string}:${string}`,
               {
                 input: this.getRequest(prompt, options, advanced),
               }
-            )
-          )
+            );
+            // FileOutput objects can be used directly as they implement ReadableStream
+            return Buffer.from(await (result as any).blob());
+          })
       );
 
-      return outputs as Buffer[];
+      return outputs;
     } catch (e) {
       console.error("Failed to generate images", e);
       return [];
