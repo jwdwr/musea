@@ -52,7 +52,7 @@ export function PlayerBody({ position }: { position: [number, number, number] })
   return (
     <group dispose={null} position={position} ref={bodyGroup}>
       <Float floatIntensity={0.5}>
-        <pointLight distance={10} decay={5} intensity={2} />
+        <pointLight distance={10} decay={2} intensity={2} />
         <points geometry={particlesGeometry} material={particlesMaterial} />
       </Float>
     </group>

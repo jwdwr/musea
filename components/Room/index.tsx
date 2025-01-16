@@ -14,6 +14,7 @@ export function RoomComponent({ room, withCeiling = true }: { room: Room; withCe
 
   return (
     <>
+      <ambientLight intensity={0.05} />
       <group ref={roomRef} position={[room.location.x * 2.1, 0, room.location.y * 2.1]}>
         <mesh
           position={[0, -1, 0]}
