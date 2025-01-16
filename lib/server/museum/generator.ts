@@ -15,9 +15,7 @@ export class MuseumGenerator {
 
   public async load(): Promise<MuseumGeneration | undefined> {
     try {
-      console.log("loading", this.key, this.store);
       const record = await this.store.get(this.key);
-      console.log("loaded", this.key, record);
       return record && JSON.parse(record);
     } catch (e) {
       console.error("Failed to load museum", e);
@@ -27,9 +25,7 @@ export class MuseumGenerator {
 
   private async save(record: MuseumGeneration): Promise<void> {
     try {
-      console.log("saving", this.key, record, this.store);
       this.store.set(this.key, JSON.stringify(record));
-      console.log("saved", this.key, record);
     } catch (e) {
       console.error("Failed to save museum", e);
     }
@@ -41,23 +37,14 @@ export class MuseumGenerator {
       if (generation) return generation;
 
       generation = { status: "generating" };
-      console.log("Generating new museum");
       this.save(generation);
 
-      console.log("Generating layout");
       const layout = await this.generateLayout();
-      console.log("Generated layout");
-
-      console.log("Generating params");
       const params = await this.generateParams(layout.listRooms().length);
-      console.log("Generated params");
-
-      console.log("Generating paintings");
       await this.generatePaintings(layout, params);
 
       const museum = { params, grid: layout.grid };
       generation = { status: "generated", museum };
-      console.log("Generated new museum");
       this.save(generation);
 
       return generation;
@@ -76,7 +63,7 @@ export class MuseumGenerator {
   }
 
   private async generateLayout(): Promise<Layout> {
-    return Layout.generateLayout(1, 1);
+    return Layout.generateLayout(5, 5);
   }
 
   private async generatePaintings(layout: Layout, params: MuseumParams): Promise<void> {

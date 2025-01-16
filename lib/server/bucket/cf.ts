@@ -17,7 +17,6 @@ export class CFBucket implements Bucket {
   async put(key: string, value: Buffer): Promise<string> {
     try {
       const result = await this.bucket.put(key, value);
-      console.log(result);
       return `${this.baseUrl}/${key}`;
     } catch (e) {
       console.error("Failed to put file", e);

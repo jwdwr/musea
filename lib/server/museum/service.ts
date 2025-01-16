@@ -14,14 +14,12 @@ export class MuseumService {
   private generator: MuseumGenerator;
   constructor() {
     const date = dayjs().format("YYYY-MM-DD-HH");
-    console.log("Using date", date);
     let store: Store;
     let bucket: Bucket;
 
     // Initialize store and bucket first
     try {
       const context = getRequestContext();
-      console.log("context", context);
       const imageBucket = context.env.IMAGES as R2Bucket;
       const mapsKv = context.env.MAPS as KVNamespace;
       if (!imageBucket || !mapsKv) throw new Error("Required Cloudflare services not available");
@@ -29,7 +27,7 @@ export class MuseumService {
       store = new KVStore(mapsKv);
       bucket = new CFBucket(imageBucket, process.env.IMAGES_HOST!);
     } catch (e) {
-      console.log("Using local fallback services");
+      console.warn("Using local fallback services");
       store = simpleStore;
       bucket = new TestBucket("/images");
     }

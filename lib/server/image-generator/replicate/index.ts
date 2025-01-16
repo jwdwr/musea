@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import Replicate from "replicate";
+import Replicate, { FileOutput } from "replicate";
 import type { ImageGenerator, ImageGeneratorOptions } from "..";
 import { defaultReplicateRequest, type ReplicateConfig, type ReplicateRequest } from "./types";
 
@@ -19,7 +19,6 @@ export class ReplicateGenerator implements ImageGenerator {
     advanced: Partial<ReplicateRequest> = {}
   ): Promise<Buffer[]> {
     try {
-      console.log("Generating images", this.config);
       if (!this.config.apiKey) throw new Error("Missing Replicate API key.");
       if (!this.config.model) throw new Error("Missing Replicate model.");
 
@@ -33,14 +32,13 @@ export class ReplicateGenerator implements ImageGenerator {
         Array(count)
           .fill(null)
           .map(async () => {
-            const result = await this.replicate.run(
+            const result = (await this.replicate.run(
               this.config.model as `${string}/${string}` | `${string}/${string}:${string}`,
               {
                 input: this.getRequest(prompt, options, advanced),
               }
-            );
-            // Convert FileOutput to Buffer by first getting the ArrayBuffer
-            const blob: Blob = await (result as any).blob();
+            )) as FileOutput;
+            const blob: Blob = await result.blob();
             const arrayBuffer = await blob.arrayBuffer();
             return Buffer.from(arrayBuffer);
           })
