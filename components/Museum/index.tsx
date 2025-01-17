@@ -7,7 +7,12 @@ import { Room } from "@/lib/shared/museum/room";
 
 export function Museum({ museum }: { museum: MuseumType }) {
   const rooms = useMemo(() => museum.grid.flat().filter((room) => room) as Room[], [museum]);
-  return rooms.map((room) => (
-    <RoomComponent key={`${room.location.x}-${room.location.y}`} room={room} />
-  ));
+  return (
+    <>
+      <ambientLight intensity={1} />
+      {rooms.map((room) => (
+        <RoomComponent key={`${room.location.x}-${room.location.y}`} room={room} />
+      ))}
+    </>
+  );
 }
