@@ -19,9 +19,19 @@ export class Room {
     this.walls[direction] = null;
   }
 
+  public addDoor(direction: Direction) {
+    if (this.walls[direction]) {
+      this.walls[direction]!.hasDoor = true;
+    }
+  }
+
   public addPainting(imageUrl: string) {
-    const directions = allDirections.filter((direction) => this.walls[direction]);
+    const directions = allDirections.filter(
+      (direction) => this.walls[direction] && !this.walls[direction]?.hasDoor
+    );
     const direction = directions[Math.floor(Math.random() * directions.length)];
-    this.walls[direction]!.paintingUrl = imageUrl;
+    if (direction !== undefined) {
+      this.walls[direction]!.paintingUrl = imageUrl;
+    }
   }
 }

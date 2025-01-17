@@ -22,6 +22,7 @@ export type Walls = {
 export interface Wall {
   direction: Direction;
   paintingUrl?: string;
+  hasDoor?: boolean;
 }
 
 export interface Location {
