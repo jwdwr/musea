@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { BoxGeometry, MeshStandardMaterial } from "three";
 import { RigidBody } from "@react-three/rapier";
 import { Wall } from "@/lib/shared/types";
@@ -6,26 +6,39 @@ import { Wall } from "@/lib/shared/types";
 // Share materials and geometries across all instances
 const wallMaterial = new MeshStandardMaterial({ color: "#666" });
 
-// Create and share all the geometries we'll need
-const geometries = {
-  sideWallSegment: new BoxGeometry(0.1, 2, 0.7), // (2.2 - 0.8) / 2 = 0.7
-  topWallSegment: new BoxGeometry(0.1, 0.4, 0.8), // 2 - 1.6 = 0.4 height
-};
-
-// Precompute common positions
-const positions = {
-  leftSegment: [0, 0, -0.75] as [number, number, number], // -(0.8/2 + 0.7/2) = -0.75
-  rightSegment: [0, 0, 0.75] as [number, number, number], // (0.8/2 + 0.7/2) = 0.75
-  topSegment: [0, 0.8, 0] as [number, number, number], // 1.6/2 = 0.8
-};
-
 interface DoorWallProps {
   wall: Wall;
   position: [number, number, number];
   rotation: [number, number, number];
+  width?: number;
 }
 
-export function DoorWall({ wall, position, rotation }: DoorWallProps) {
+export function DoorWall({ wall, position, rotation, width = 1 }: DoorWallProps) {
+  // Create geometries based on width
+  const geometries = useMemo(() => {
+    const totalWidth = 2.2 * width;
+    const doorWidth = 0.8;
+    const sideWidth = (totalWidth - doorWidth) / 2;
+
+    return {
+      sideWallSegment: new BoxGeometry(0.1, 2, sideWidth),
+      topWallSegment: new BoxGeometry(0.1, 0.4, doorWidth),
+    };
+  }, [width]);
+
+  // Calculate positions based on width
+  const positions = useMemo(() => {
+    const totalWidth = 2.2 * width;
+    const doorWidth = 0.8;
+    const sideWidth = (totalWidth - doorWidth) / 2;
+
+    return {
+      leftSegment: [0, 0, -(doorWidth / 2 + sideWidth / 2)] as [number, number, number],
+      rightSegment: [0, 0, doorWidth / 2 + sideWidth / 2] as [number, number, number],
+      topSegment: [0, 0.8, 0] as [number, number, number],
+    };
+  }, [width]);
+
   return (
     <group position={position} rotation={rotation}>
       <RigidBody type="fixed" colliders="cuboid">
