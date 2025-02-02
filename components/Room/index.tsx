@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useRef } from "react";
-import { BoxGeometry, Group, MeshStandardMaterial, PlaneGeometry } from "three";
+import { BoxGeometry, Group, PlaneGeometry } from "three";
 import { Room } from "../../lib/shared/museum/room";
 import { Direction } from "../../lib/shared/museum/directions";
 import { RoomWall } from "./RoomWall";
 import { RigidBody } from "@react-three/rapier";
-
-// Share materials and geometries across all rooms
-const floorMaterial = new MeshStandardMaterial({ color: "#aaccff" });
+import { TexturedMaterial } from "./TexturedMaterial";
 
 export function RoomComponent({ room, withCeiling = true }: { room: Room; withCeiling?: boolean }) {
   const roomRef = useRef<Group>(null);
@@ -46,16 +44,15 @@ export function RoomComponent({ room, withCeiling = true }: { room: Room; withCe
 
   return (
     <group ref={roomRef} position={roomPosition}>
-      <mesh
-        position={floorPosition}
-        rotation={floorRotation}
-        geometry={floorGeometry}
-        material={floorMaterial}
-      />
+      <mesh position={floorPosition} rotation={floorRotation} geometry={floorGeometry}>
+        <TexturedMaterial maps={room.materials?.floor || {}} color="#aaccff" />
+      </mesh>
 
       {withCeiling && (
         <RigidBody type="fixed" colliders="cuboid">
-          <mesh position={ceilingPosition} geometry={ceilingGeometry} material={floorMaterial} />
+          <mesh position={ceilingPosition} geometry={ceilingGeometry}>
+            <TexturedMaterial maps={room.materials?.ceiling || {}} color="#aaccff" />
+          </mesh>
         </RigidBody>
       )}
 

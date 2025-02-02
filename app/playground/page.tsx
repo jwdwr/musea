@@ -4,7 +4,25 @@ import React, { useState } from "react";
 import { Layout2D } from "@/components/Museum/Layout2D";
 import { Museum } from "@/components/Museum";
 import { World } from "@/components/World";
-import type { LayoutGrid } from "@/lib/shared/types";
+import type { LayoutGrid, RoomMaterials, Wall } from "@/lib/shared/types";
+import { Room } from "@/lib/shared/museum/room";
+import { Direction } from "@/lib/shared/museum/directions";
+
+// Define default materials
+const defaultMaterials: RoomMaterials = {
+  floor: {
+    diffuse: "/textures/herringbone/herringbone_parquet_diff_4k.jpg",
+    normal: "/textures/herringbone/herringbone_parquet_nor_gl_4k.jpg",
+  },
+  walls: {
+    diffuse: "/textures/brick/red_brick_diff_4k.jpg",
+    normal: "/textures/brick/red_brick_disp_4k.png",
+  },
+  ceiling: {
+    diffuse: "/textures/granite/granite_tile_diff_4k.jpg",
+    normal: "/textures/granite/granite_tile_disp_4k.png",
+  },
+};
 
 export default function PlaygroundPage() {
   const [width, setWidth] = useState(5);
@@ -13,8 +31,42 @@ export default function PlaygroundPage() {
 
   const generateLayout = async () => {
     const response = await fetch(`/api/museum/layout?width=${width}&height=${height}`);
-    const { grid } = await response.json();
-    setGrid(grid);
+    const { grid: rawGrid } = await response.json();
+
+    // Convert raw grid to proper Room instances
+    const processedGrid = rawGrid.map((row: any[], y: number) =>
+      row.map((cell: any, x: number) => {
+        if (!cell) return null;
+
+        // Create new Room instance with the same properties
+        const room = new Room(
+          { x: cell.location.x, y: cell.location.y },
+          { width: cell.size.width, height: cell.size.height, depth: cell.size.depth }
+        );
+
+        // Copy over walls and their properties
+        Object.entries(cell.walls).forEach(([dir, wallData]) => {
+          const direction = Number(dir) as Direction;
+          if (wallData) {
+            const wall: Wall = {
+              direction,
+              ...wallData,
+            };
+            room.walls[direction] = wall;
+          } else {
+            room.removeWall(direction);
+          }
+        });
+
+        // Add materials and update walls
+        room.materials = defaultMaterials;
+        room.updateWallMaterials();
+
+        return room;
+      })
+    );
+
+    setGrid(processedGrid);
   };
 
   return (

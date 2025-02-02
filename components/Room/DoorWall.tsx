@@ -1,10 +1,8 @@
 import React, { useMemo } from "react";
-import { BoxGeometry, MeshStandardMaterial } from "three";
+import { BoxGeometry } from "three";
 import { RigidBody } from "@react-three/rapier";
 import { Wall } from "@/lib/shared/types";
-
-// Share materials and geometries across all instances
-const wallMaterial = new MeshStandardMaterial({ color: "#666" });
+import { TexturedMaterial } from "./TexturedMaterial";
 
 interface DoorWallProps {
   wall: Wall;
@@ -43,21 +41,15 @@ export function DoorWall({ wall, position, rotation, width = 1 }: DoorWallProps)
     <group position={position} rotation={rotation}>
       <RigidBody type="fixed" colliders="cuboid">
         <group>
-          <mesh
-            geometry={geometries.sideWallSegment}
-            material={wallMaterial}
-            position={positions.leftSegment}
-          />
-          <mesh
-            geometry={geometries.sideWallSegment}
-            material={wallMaterial}
-            position={positions.rightSegment}
-          />
-          <mesh
-            geometry={geometries.topWallSegment}
-            material={wallMaterial}
-            position={positions.topSegment}
-          />
+          <mesh geometry={geometries.sideWallSegment} position={positions.leftSegment}>
+            <TexturedMaterial maps={wall.materials?.walls || {}} color="#666" />
+          </mesh>
+          <mesh geometry={geometries.sideWallSegment} position={positions.rightSegment}>
+            <TexturedMaterial maps={wall.materials?.walls || {}} color="#666" />
+          </mesh>
+          <mesh geometry={geometries.topWallSegment} position={positions.topSegment}>
+            <TexturedMaterial maps={wall.materials?.walls || {}} color="#666" />
+          </mesh>
         </group>
       </RigidBody>
     </group>

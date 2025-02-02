@@ -1,5 +1,4 @@
 import type { Direction } from "./museum/directions";
-import type { Room } from "./museum/room";
 
 export type LayoutGrid = (Room | null)[][];
 
@@ -23,6 +22,9 @@ export interface Wall {
   direction: Direction;
   paintingUrl?: string;
   hasDoor?: boolean;
+  materials?: {
+    walls?: TextureMaps;
+  };
 }
 
 export interface Location {
@@ -34,6 +36,25 @@ export interface Size {
   width: number;
   height: number;
   depth: number;
+}
+
+export interface TextureMaps {
+  diffuse?: string; // Base color/diffuse texture
+  normal?: string; // Normal map texture
+  arm?: string; // Ambient Occlusion, Roughness, Metallic combined texture
+}
+
+export interface RoomMaterials {
+  floor?: TextureMaps;
+  walls?: TextureMaps;
+  ceiling?: TextureMaps;
+}
+
+export interface Room {
+  location: Location;
+  size: Size;
+  walls: Walls;
+  materials?: RoomMaterials;
 }
 
 export interface Museum {

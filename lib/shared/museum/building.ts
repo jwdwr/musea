@@ -28,65 +28,6 @@ interface Building {
   stories: Story[];
 }
 
-// Check if a room is accessible from the entrance using BFS
-const isRoomAccessible = (room: RoomData, rooms: RoomData[], entrance: RoomData) => {
-  const visited = new Set();
-  const queue = [entrance];
-
-  while (queue.length > 0) {
-    const currentRoom = queue.shift();
-    if (!currentRoom) continue;
-    visited.add(currentRoom.id);
-
-    if (currentRoom.id === room.id) return true;
-
-    for (const connectedId of currentRoom.connections) {
-      const connectedRoom = rooms.find((r) => r.id === connectedId);
-      if (connectedRoom && !visited.has(connectedRoom.id)) {
-        queue.push(connectedRoom);
-      }
-    }
-
-    // Check stairs connections
-    if (currentRoom.stairs?.to) {
-      const connectedRoom = rooms.find((r) => r.id === currentRoom.stairs?.to);
-      if (connectedRoom && !visited.has(connectedRoom.id)) {
-        queue.push(connectedRoom);
-      }
-    }
-  }
-
-  return false;
-};
-
-// Find all accessible rooms from a starting room
-const findAccessibleRooms = (startRoom: RoomData, allRooms: RoomData[]) => {
-  const visited = new Set();
-  const queue = [startRoom];
-
-  while (queue.length > 0) {
-    const currentRoom = queue.shift();
-    if (!currentRoom) continue;
-    visited.add(currentRoom.id);
-
-    for (const connectedId of currentRoom.connections) {
-      const connectedRoom = allRooms.find((r) => r.id === connectedId);
-      if (connectedRoom && !visited.has(connectedRoom.id)) {
-        queue.push(connectedRoom);
-      }
-    }
-
-    if (currentRoom.stairs?.to) {
-      const connectedRoom = allRooms.find((r) => r.id === currentRoom.stairs?.to);
-      if (connectedRoom && !visited.has(connectedRoom.id)) {
-        queue.push(connectedRoom);
-      }
-    }
-  }
-
-  return visited;
-};
-
 const generateRooms = (width: number, depth: number): RoomData[] => {
   // Initialize grid to track available space
   const grid = Array(width)

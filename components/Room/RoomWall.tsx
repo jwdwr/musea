@@ -1,13 +1,11 @@
 import React, { useMemo } from "react";
-import { BoxGeometry, MeshStandardMaterial } from "three";
+import { BoxGeometry } from "three";
 import { RigidBody } from "@react-three/rapier";
 import { Direction } from "@/lib/shared/museum/directions";
 import { Painting } from "./Painting";
 import { DoorWall } from "./DoorWall";
 import { Wall } from "@/lib/shared/types";
-
-// Share materials and geometries across all instances
-const wallMaterial = new MeshStandardMaterial({ color: "#666" });
+import { TexturedMaterial } from "./TexturedMaterial";
 
 export function RoomWall({ wall, width = 1 }: { wall: Wall; width?: number }) {
   const { direction } = wall;
@@ -82,7 +80,9 @@ export function RoomWall({ wall, width = 1 }: { wall: Wall; width?: number }) {
   return (
     <group position={transforms.wallPosition} rotation={transforms.wallRotation}>
       <RigidBody type="fixed" colliders="cuboid">
-        <mesh geometry={fullWallGeometry} material={wallMaterial} />
+        <mesh geometry={fullWallGeometry}>
+          <TexturedMaterial maps={wall.materials?.walls || {}} color="#666" />
+        </mesh>
       </RigidBody>
 
       {wall.paintingUrl && (

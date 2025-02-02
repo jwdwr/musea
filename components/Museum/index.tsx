@@ -9,7 +9,7 @@ export function Museum({ museum }: { museum: MuseumType }) {
   const rooms = useMemo(() => museum.grid.flat().filter((room) => room) as Room[], [museum]);
   return (
     <>
-      <ambientLight intensity={1} />
+      <ambientLight intensity={4} />
       {rooms.map((room) => (
         <RoomComponent key={`${room.location.x}-${room.location.y}`} room={room} />
       ))}
