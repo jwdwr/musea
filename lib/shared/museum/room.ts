@@ -31,6 +31,15 @@ export class Room {
     }
   }
 
+  public addWindow(direction: Direction) {
+    if (this.walls[direction]) {
+      this.walls[direction]!.hasWindow = true;
+      if (this.materials) {
+        this.walls[direction]!.materials = { walls: this.materials.walls };
+      }
+    }
+  }
+
   public addPainting(imageUrl: string) {
     const directions = allDirections.filter(
       (direction) => this.walls[direction] && !this.walls[direction]?.hasDoor

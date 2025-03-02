@@ -10,9 +10,10 @@ const BLANK_TEXTURE =
 interface TexturedMaterialProps {
   maps: TextureMaps;
   color?: string;
+  repeat?: Vector2;
 }
 
-export function TexturedMaterial({ maps, color = "#ffffff" }: TexturedMaterialProps) {
+export function TexturedMaterial({ maps, color = "#ffffff", repeat }: TexturedMaterialProps) {
   // Load textures separately to avoid conditional hooks
   const diffuseMap = useLoader(TextureLoader, maps.diffuse || BLANK_TEXTURE);
   const normalMap = useLoader(TextureLoader, maps.normal || BLANK_TEXTURE);
@@ -35,12 +36,17 @@ export function TexturedMaterial({ maps, color = "#ffffff" }: TexturedMaterialPr
       const isUsed = index === 0 ? maps.diffuse : index === 1 ? maps.normal : maps.arm;
       if (isUsed) {
         texture.wrapS = texture.wrapT = RepeatWrapping;
-        texture.repeat.set(1, 1);
+        // Use custom repeat value if provided, otherwise default to 1,1
+        if (repeat) {
+          texture.repeat.copy(repeat);
+        } else {
+          texture.repeat.set(1, 1);
+        }
       }
     });
 
     return mat;
-  }, [diffuseMap, normalMap, armMap, color, maps]);
+  }, [diffuseMap, normalMap, armMap, color, maps, repeat]);
 
   return <primitive object={material} />;
 }

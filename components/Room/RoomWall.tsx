@@ -4,6 +4,7 @@ import { RigidBody } from "@react-three/rapier";
 import { Direction } from "@/lib/shared/museum/directions";
 import { Painting } from "./Painting";
 import { DoorWall } from "./DoorWall";
+import { WindowWall } from "./WindowWall";
 import { Wall } from "@/lib/shared/types";
 import { TexturedMaterial } from "./TexturedMaterial";
 
@@ -69,6 +70,17 @@ export function RoomWall({ wall, width = 1 }: { wall: Wall; width?: number }) {
   if (wall.hasDoor) {
     return (
       <DoorWall
+        wall={wall}
+        position={transforms.wallPosition}
+        rotation={transforms.wallRotation}
+        width={width}
+      />
+    );
+  }
+
+  if (wall.hasWindow) {
+    return (
+      <WindowWall
         wall={wall}
         position={transforms.wallPosition}
         rotation={transforms.wallRotation}

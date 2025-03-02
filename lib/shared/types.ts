@@ -22,6 +22,7 @@ export interface Wall {
   direction: Direction;
   paintingUrl?: string;
   hasDoor?: boolean;
+  hasWindow?: boolean;
   materials?: {
     walls?: TextureMaps;
   };

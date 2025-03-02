@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Room } from "@/lib/shared/museum/room";
+import { Room as RoomClass } from "@/lib/shared/museum/room";
 import { Direction } from "@/lib/shared/museum/directions";
-import type { LayoutGrid } from "@/lib/shared/types";
+import type { LayoutGrid, Room } from "@/lib/shared/types";
 
 interface RoomWithSize {
   room: Room;
@@ -130,6 +130,52 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
     return null;
   };
 
+  // Find window positions for each room
+  const findWindowPosition = (
+    room: RoomWithSize,
+    direction: Direction
+  ): { x: number; y: number } | null => {
+    switch (direction) {
+      case Direction.North:
+        for (let dx = 0; dx < room.width; dx++) {
+          const cellX = room.x + dx;
+          const cellY = room.y;
+          if (grid[cellX][cellY]?.walls[Direction.North]?.hasWindow) {
+            return { x: dx, y: 0 };
+          }
+        }
+        break;
+      case Direction.South:
+        for (let dx = 0; dx < room.width; dx++) {
+          const cellX = room.x + dx;
+          const cellY = room.y + room.height - 1;
+          if (grid[cellX][cellY]?.walls[Direction.South]?.hasWindow) {
+            return { x: dx, y: room.height - 1 };
+          }
+        }
+        break;
+      case Direction.East:
+        for (let dy = 0; dy < room.height; dy++) {
+          const cellX = room.x + room.width - 1;
+          const cellY = room.y + dy;
+          if (grid[cellX][cellY]?.walls[Direction.East]?.hasWindow) {
+            return { x: room.width - 1, y: dy };
+          }
+        }
+        break;
+      case Direction.West:
+        for (let dy = 0; dy < room.height; dy++) {
+          const cellX = room.x;
+          const cellY = room.y + dy;
+          if (grid[cellX][cellY]?.walls[Direction.West]?.hasWindow) {
+            return { x: 0, y: dy };
+          }
+        }
+        break;
+    }
+    return null;
+  };
+
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       {rooms.map(({ room, width: roomWidth, height: roomHeight, x, y }, index) => {
@@ -154,6 +200,13 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
         const southDoor = findDoorPosition(rooms[index], Direction.South);
         const eastDoor = findDoorPosition(rooms[index], Direction.East);
         const westDoor = findDoorPosition(rooms[index], Direction.West);
+
+        const northWindow = findWindowPosition(rooms[index], Direction.North);
+        const southWindow = findWindowPosition(rooms[index], Direction.South);
+        const eastWindow = findWindowPosition(rooms[index], Direction.East);
+        const westWindow = findWindowPosition(rooms[index], Direction.West);
+
+        const windowWidth = 15;
 
         return (
           <g key={index} transform={`translate(${x * cellSize} ${y * cellSize})`}>
@@ -181,6 +234,34 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
                     />
                     <line
                       x1={northDoor.x * cellSize + (cellSize + doorWidth) / 2}
+                      y1={2}
+                      x2={roomWidth * cellSize - 2}
+                      y2={2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                  </>
+                ) : northWindow ? (
+                  <>
+                    <line
+                      x1={2}
+                      y1={2}
+                      x2={northWindow.x * cellSize + (cellSize - windowWidth) / 2}
+                      y2={2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                    <line
+                      x1={northWindow.x * cellSize + (cellSize - windowWidth) / 2}
+                      y1={2}
+                      x2={northWindow.x * cellSize + (cellSize + windowWidth) / 2}
+                      y2={2}
+                      stroke="#000"
+                      strokeWidth={1}
+                      strokeDasharray="2,1"
+                    />
+                    <line
+                      x1={northWindow.x * cellSize + (cellSize + windowWidth) / 2}
                       y1={2}
                       x2={roomWidth * cellSize - 2}
                       y2={2}
@@ -222,6 +303,34 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
                       strokeWidth={2}
                     />
                   </>
+                ) : southWindow ? (
+                  <>
+                    <line
+                      x1={2}
+                      y1={roomHeight * cellSize - 2}
+                      x2={southWindow.x * cellSize + (cellSize - windowWidth) / 2}
+                      y2={roomHeight * cellSize - 2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                    <line
+                      x1={southWindow.x * cellSize + (cellSize - windowWidth) / 2}
+                      y1={roomHeight * cellSize - 2}
+                      x2={southWindow.x * cellSize + (cellSize + windowWidth) / 2}
+                      y2={roomHeight * cellSize - 2}
+                      stroke="#000"
+                      strokeWidth={1}
+                      strokeDasharray="2,1"
+                    />
+                    <line
+                      x1={southWindow.x * cellSize + (cellSize + windowWidth) / 2}
+                      y1={roomHeight * cellSize - 2}
+                      x2={roomWidth * cellSize - 2}
+                      y2={roomHeight * cellSize - 2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                  </>
                 ) : (
                   <line
                     x1={2}
@@ -256,6 +365,34 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
                       strokeWidth={2}
                     />
                   </>
+                ) : eastWindow ? (
+                  <>
+                    <line
+                      x1={roomWidth * cellSize - 2}
+                      y1={2}
+                      x2={roomWidth * cellSize - 2}
+                      y2={eastWindow.y * cellSize + (cellSize - windowWidth) / 2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                    <line
+                      x1={roomWidth * cellSize - 2}
+                      y1={eastWindow.y * cellSize + (cellSize - windowWidth) / 2}
+                      x2={roomWidth * cellSize - 2}
+                      y2={eastWindow.y * cellSize + (cellSize + windowWidth) / 2}
+                      stroke="#000"
+                      strokeWidth={1}
+                      strokeDasharray="2,1"
+                    />
+                    <line
+                      x1={roomWidth * cellSize - 2}
+                      y1={eastWindow.y * cellSize + (cellSize + windowWidth) / 2}
+                      x2={roomWidth * cellSize - 2}
+                      y2={roomHeight * cellSize - 2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                  </>
                 ) : (
                   <line
                     x1={roomWidth * cellSize - 2}
@@ -284,6 +421,34 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
                     <line
                       x1={2}
                       y1={westDoor.y * cellSize + (cellSize + doorWidth) / 2}
+                      x2={2}
+                      y2={roomHeight * cellSize - 2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                  </>
+                ) : westWindow ? (
+                  <>
+                    <line
+                      x1={2}
+                      y1={2}
+                      x2={2}
+                      y2={westWindow.y * cellSize + (cellSize - windowWidth) / 2}
+                      stroke="#000"
+                      strokeWidth={2}
+                    />
+                    <line
+                      x1={2}
+                      y1={westWindow.y * cellSize + (cellSize - windowWidth) / 2}
+                      x2={2}
+                      y2={westWindow.y * cellSize + (cellSize + windowWidth) / 2}
+                      stroke="#000"
+                      strokeWidth={1}
+                      strokeDasharray="2,1"
+                    />
+                    <line
+                      x1={2}
+                      y1={westWindow.y * cellSize + (cellSize + windowWidth) / 2}
                       x2={2}
                       y2={roomHeight * cellSize - 2}
                       stroke="#000"

@@ -396,6 +396,78 @@ export const generateBuilding = (width: number, height: number): LayoutGrid => {
           }
         });
 
+        // Track if we've already added a window to each side of the room
+        // We'll use this to ensure only one window per side
+        const roomSideHasWindow = {
+          [Direction.North]: false,
+          [Direction.South]: false,
+          [Direction.East]: false,
+          [Direction.West]: false,
+        };
+
+        // Check if any cell in this room already has a window on each side
+        for (let rx = roomData.x; rx < roomData.x + roomData.width; rx++) {
+          for (let ry = roomData.y; ry < roomData.y + roomData.height; ry++) {
+            // Skip cells that haven't been processed yet
+            if (rx > x || (rx === x && ry > y)) continue;
+
+            const cell = layoutGrid[rx][ry];
+            if (!cell) continue;
+
+            if (cell.walls[Direction.North]?.hasWindow) roomSideHasWindow[Direction.North] = true;
+            if (cell.walls[Direction.South]?.hasWindow) roomSideHasWindow[Direction.South] = true;
+            if (cell.walls[Direction.East]?.hasWindow) roomSideHasWindow[Direction.East] = true;
+            if (cell.walls[Direction.West]?.hasWindow) roomSideHasWindow[Direction.West] = true;
+          }
+        }
+
+        // Add windows to exterior walls with a 40% chance
+        // Check if this is an exterior wall (edge of the grid)
+        if (x === 0 && room.walls[Direction.West]) {
+          // Add a window with 40% chance if this side doesn't have one yet and there's no door
+          if (
+            !roomSideHasWindow[Direction.West] &&
+            Math.random() < 0.4 &&
+            !room.walls[Direction.West]?.hasDoor
+          ) {
+            room.addWindow(Direction.West);
+            roomSideHasWindow[Direction.West] = true;
+          }
+        }
+        if (x === width - 1 && room.walls[Direction.East]) {
+          // Add a window with 40% chance if this side doesn't have one yet and there's no door
+          if (
+            !roomSideHasWindow[Direction.East] &&
+            Math.random() < 0.4 &&
+            !room.walls[Direction.East]?.hasDoor
+          ) {
+            room.addWindow(Direction.East);
+            roomSideHasWindow[Direction.East] = true;
+          }
+        }
+        if (y === 0 && room.walls[Direction.North]) {
+          // Add a window with 40% chance if this side doesn't have one yet and there's no door
+          if (
+            !roomSideHasWindow[Direction.North] &&
+            Math.random() < 0.4 &&
+            !room.walls[Direction.North]?.hasDoor
+          ) {
+            room.addWindow(Direction.North);
+            roomSideHasWindow[Direction.North] = true;
+          }
+        }
+        if (y === height - 1 && room.walls[Direction.South]) {
+          // Add a window with 40% chance if this side doesn't have one yet and there's no door
+          if (
+            !roomSideHasWindow[Direction.South] &&
+            Math.random() < 0.4 &&
+            !room.walls[Direction.South]?.hasDoor
+          ) {
+            room.addWindow(Direction.South);
+            roomSideHasWindow[Direction.South] = true;
+          }
+        }
+
         // Mark entrance rooms with a special property
         if (roomData.isEntrance) {
           // Store entrance information in a way that doesn't conflict with Room type
