@@ -13,6 +13,13 @@ export class Room {
 
   public materials?: RoomMaterials;
 
+  public metadata: {
+    isEntrance?: boolean;
+    isStaircase?: boolean;
+    connectedFloors?: number[];
+    floorNumber?: number;
+  } = {};
+
   constructor(
     public location: Location = { x: 0, y: 0 },
     public size: Size = { width: 1, height: 1, depth: 1 }

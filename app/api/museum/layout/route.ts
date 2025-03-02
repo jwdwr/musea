@@ -5,7 +5,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const width = parseInt(searchParams.get("width") || "5");
   const height = parseInt(searchParams.get("height") || "5");
-  const grid = generateBuilding(width, height);
+  const numFloors = parseInt(searchParams.get("numFloors") || "1");
 
-  return NextResponse.json({ grid });
+  const buildingLayout = generateBuilding(width, height, numFloors);
+
+  return NextResponse.json({ buildingLayout });
 }

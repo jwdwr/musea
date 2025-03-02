@@ -2,6 +2,9 @@ import type { Direction } from "./museum/directions";
 
 export type LayoutGrid = (Room | null)[][];
 
+// New type for multi-floor buildings
+export type BuildingLayout = LayoutGrid[];
+
 export interface MuseumPalette {
   light: string;
   medium: string;
@@ -56,11 +59,19 @@ export interface Room {
   size: Size;
   walls: Walls;
   materials?: RoomMaterials;
+  metadata?: {
+    isEntrance?: boolean;
+    isStaircase?: boolean;
+    connectedFloors?: number[];
+    floorNumber?: number;
+  };
 }
 
 export interface Museum {
   params: MuseumParams;
   grid: LayoutGrid;
+  floors?: BuildingLayout;
+  currentFloor?: number;
 }
 
 export interface Painting {

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Layout2D } from "@/components/Museum/Layout2D";
 import { Museum } from "@/components/Museum";
 import { World } from "@/components/World";
-import type { LayoutGrid, RoomMaterials, Wall } from "@/lib/shared/types";
+import type { LayoutGrid, RoomMaterials, Wall, BuildingLayout } from "@/lib/shared/types";
 import { Room } from "@/lib/shared/museum/room";
 import { Direction } from "@/lib/shared/museum/directions";
 
@@ -27,46 +27,66 @@ const defaultMaterials: RoomMaterials = {
 export default function PlaygroundPage() {
   const [width, setWidth] = useState(5);
   const [height, setHeight] = useState(5);
-  const [grid, setGrid] = useState<LayoutGrid | null>(null);
+  const [numFloors, setNumFloors] = useState(2);
+  const [buildingLayout, setBuildingLayout] = useState<BuildingLayout | null>(null);
+  const [currentFloor, setCurrentFloor] = useState(0);
 
   const generateLayout = async () => {
-    const response = await fetch(`/api/museum/layout?width=${width}&height=${height}`);
-    const { grid: rawGrid } = await response.json();
+    const response = await fetch(
+      `/api/museum/layout?width=${width}&height=${height}&numFloors=${numFloors}`
+    );
+    const { buildingLayout: rawBuildingLayout } = await response.json();
 
-    // Convert raw grid to proper Room instances
-    const processedGrid = rawGrid.map((row: any[], y: number) =>
-      row.map((cell: any, x: number) => {
-        if (!cell) return null;
+    // Convert raw grid to proper Room instances for each floor
+    const processedLayout: BuildingLayout = rawBuildingLayout.map((floorGrid: any[]) =>
+      floorGrid.map((row: any[], y: number) =>
+        row.map((cell: any, x: number) => {
+          if (!cell) return null;
 
-        // Create new Room instance with the same properties
-        const room = new Room(
-          { x: cell.location.x, y: cell.location.y },
-          { width: cell.size.width, height: cell.size.height, depth: cell.size.depth }
-        );
+          // Create new Room instance with the same properties
+          const room = new Room(
+            { x: cell.location.x, y: cell.location.y },
+            { width: cell.size.width, height: cell.size.height, depth: cell.size.depth }
+          );
 
-        // Copy over walls and their properties
-        Object.entries(cell.walls).forEach(([dir, wallData]) => {
-          const direction = Number(dir) as Direction;
-          if (wallData) {
-            const wall: Wall = {
-              direction,
-              ...wallData,
-            };
-            room.walls[direction] = wall;
-          } else {
-            room.removeWall(direction);
+          // Copy over walls and their properties
+          Object.entries(cell.walls).forEach(([dir, wallData]) => {
+            const direction = Number(dir) as Direction;
+            if (wallData) {
+              const wall: Wall = {
+                direction,
+                ...wallData,
+              };
+              room.walls[direction] = wall;
+            } else {
+              room.removeWall(direction);
+            }
+          });
+
+          // Add materials and update walls
+          room.materials = defaultMaterials;
+          room.updateWallMaterials();
+
+          // Copy metadata
+          if (cell.metadata) {
+            room.metadata = { ...cell.metadata };
           }
-        });
 
-        // Add materials and update walls
-        room.materials = defaultMaterials;
-        room.updateWallMaterials();
-
-        return room;
-      })
+          return room;
+        })
+      )
     );
 
-    setGrid(processedGrid);
+    setBuildingLayout(processedLayout);
+    setCurrentFloor(0); // Reset to ground floor when generating new layout
+  };
+
+  // Helper to get the current floor's grid
+  const getCurrentFloorGrid = (): LayoutGrid | null => {
+    if (!buildingLayout || currentFloor >= buildingLayout.length) {
+      return null;
+    }
+    return buildingLayout[currentFloor];
   };
 
   return (
@@ -97,6 +117,17 @@ export default function PlaygroundPage() {
               className="border rounded px-3 py-2"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Floors</label>
+            <input
+              type="number"
+              min="1"
+              max="5"
+              value={numFloors}
+              onChange={(e) => setNumFloors(parseInt(e.target.value))}
+              className="border rounded px-3 py-2"
+            />
+          </div>
           <button
             onClick={generateLayout}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 self-end"
@@ -105,28 +136,53 @@ export default function PlaygroundPage() {
           </button>
         </div>
 
-        {grid && (
-          <div className="grid grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">2D View</h2>
-              <Layout2D grid={grid} />
+        {buildingLayout && (
+          <>
+            <div className="mb-4 flex gap-2">
+              <label className="text-sm font-medium self-center">Current Floor:</label>
+              <div className="flex">
+                {buildingLayout.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentFloor(index)}
+                    className={`px-3 py-1 border ${
+                      currentFloor === index
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {index === 0 ? "Ground" : `Floor ${index}`}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow h-[400px]">
-              <h2 className="text-xl font-semibold mb-4">3D View</h2>
-              <World>
-                <Museum
-                  museum={{
-                    grid,
-                    params: {
-                      theme: "",
-                      prompts: [],
-                      palette: { light: "#fff", medium: "#999", dark: "#666" },
-                    },
-                  }}
-                />
-              </World>
+
+            <div className="grid grid-cols-2 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h2 className="text-xl font-semibold mb-4">
+                  2D View - {currentFloor === 0 ? "Ground Floor" : `Floor ${currentFloor}`}
+                </h2>
+                <Layout2D grid={getCurrentFloorGrid() || []} />
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow h-[400px]">
+                <h2 className="text-xl font-semibold mb-4">3D View</h2>
+                <World>
+                  <Museum
+                    museum={{
+                      grid: getCurrentFloorGrid() || [],
+                      params: {
+                        theme: "",
+                        prompts: [],
+                        palette: { light: "#fff", medium: "#999", dark: "#666" },
+                      },
+                      floors: buildingLayout,
+                      currentFloor: currentFloor,
+                    }}
+                  />
+                </World>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

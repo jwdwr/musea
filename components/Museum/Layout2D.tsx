@@ -208,6 +208,28 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
 
         const windowWidth = 15;
 
+        // Determine room style based on its properties
+        let roomFill = "#eee";
+        let roomLabel = "";
+
+        // Check for entrance
+        if (room.metadata?.isEntrance) {
+          roomFill = "#c8e6c9"; // Light green for entrance
+          roomLabel = "E";
+        }
+
+        // Check for staircase
+        if (room.metadata?.isStaircase) {
+          roomFill = "#bbdefb"; // Light blue for stairs
+          roomLabel = "S";
+
+          // If we have connected floor information, display it
+          if (room.metadata?.connectedFloors?.length) {
+            const connectedFloors = room.metadata.connectedFloors;
+            roomLabel = `S→${connectedFloors.join(",")}`;
+          }
+        }
+
         return (
           <g key={index} transform={`translate(${x * cellSize} ${y * cellSize})`}>
             <rect
@@ -215,10 +237,25 @@ export function Layout2D({ grid }: { grid: LayoutGrid }) {
               y={2}
               width={roomWidth * cellSize - 4}
               height={roomHeight * cellSize - 4}
-              fill="#eee"
+              fill={roomFill}
               stroke="#666"
               strokeWidth={1}
             />
+
+            {/* Room label */}
+            {roomLabel && (
+              <text
+                x={(roomWidth * cellSize) / 2}
+                y={(roomHeight * cellSize) / 2}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize="12"
+                fontWeight="bold"
+              >
+                {roomLabel}
+              </text>
+            )}
+
             {/* North wall */}
             {hasNorthWall && (
               <>
