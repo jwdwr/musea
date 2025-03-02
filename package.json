@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.33.1",
@@ -36,7 +37,8 @@
     "@cloudflare/workers-types": "^4.20230717.1",
     "@types/three": "^0.154.0",
     "@types/uuid": "^9.0.2",
-    "vercel": "39.1.1"
+    "vercel": "39.1.1",
+    "vitest": "^3.0.7"
   },
   "overrides": {
     "vercel": "$vercel"
